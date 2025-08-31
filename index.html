@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PC Store Cambodia</title>
+  <meta name="description" content="Modern, responsive e‑commerce website for selling PCs in Cambodia." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020;           /* Deep black/blue */
+      --panel:#0f172a;        /* Slate-ish */
+      --panel-2:#111827;      /* Slightly lighter */
+      --text:#e5e7eb;         /* Silver */
+      --muted:#9ca3af;        /* Muted silver */
+      --brand:#3b82f6;        /* Tech blue */
+      --brand-2:#60a5fa;      /* Light tech blue */
+      --accent:#22d3ee;       /* cyber cyan */
+      --ok:#22c55e;           /* success */
+      --danger:#ef4444;       /* danger */
+      --ring:0 0 0 3px rgba(59,130,246,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+      background:linear-gradient(180deg,#0a0f1e 0%, #0b1020 60%, #0b1020 100%);
+      color:var(--text);
+    }
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; display:block}
+    .container{max-width:1200px; margin:0 auto; padding:0 16px}
+    .nav{
+      position:sticky; top:0; z-index:30; backdrop-filter:saturate(140%) blur(8px);
+      background:rgba(10,15,30,.7); border-bottom:1px solid rgba(148,163,184,.15);
+    }
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.3px}
+    .logo{width:36px; height:36px; border-radius:12px; background:
+      radial-gradient(60% 60% at 30% 30%, var(--brand) 0%, var(--brand-2) 40%, #0ea5e9 100%);
+      box-shadow:0 10px 30px rgba(59,130,246,.35), inset 0 0 16px rgba(255,255,255,.15);
+    }
+    .nav-links{display:flex; flex-wrap:wrap; gap:10px}
+    .tab{padding:10px 14px; border-radius:12px; background:transparent; border:1px solid transparent; color:var(--text);
+      cursor:pointer; font-weight:600}
+    .tab.active{background:linear-gradient(180deg,#111827,#0f172a); border-color:rgba(148,163,184,.2)}
+    .pill{padding:10px 14px; border-radius:999px; background:transparent; border:1px solid rgba(148,163,184,.25); cursor:pointer}
+    .pill:hover{border-color:rgba(148,163,184,.45)}
+    .cart-btn{position:relative}
+    .cart-count{position:absolute; top:-8px; right:-8px; background:var(--danger); color:white; font-size:12px; padding:2px 6px; border-radius:999px}
+
+    /* Hero */
+    .hero{position:relative; overflow:hidden; border-bottom:1px solid rgba(148,163,184,.15)}
+    .hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:24px; padding:48px 0}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; background:rgba(59,130,246,.12); color:#cfe2ff; border:1px solid rgba(59,130,246,.35)}
+    .hero h1{font-size:clamp(28px,4vw,44px); line-height:1.1; margin:16px 0}
+    .hero p{color:var(--muted); max-width:60ch}
+    .hero-cta{display:flex; gap:12px; margin-top:18px}
+    .btn{padding:12px 16px; border:none; border-radius:14px; font-weight:700; cursor:pointer}
+    .btn-primary{background:linear-gradient(180deg,#2563eb,#1d4ed8); color:white; box-shadow:0 10px 30px rgba(37,99,235,.35)}
+    .btn-outline{background:transparent; color:var(--text); border:1px solid rgba(148,163,184,.35)}
+    .hero-card{background:linear-gradient(180deg,#0b132b,#0a1227); border:1px solid rgba(148,163,184,.18); border-radius:18px; padding:18px; display:grid; gap:12px}
+
+    /* Sections */
+    section{padding:44px 0}
+    .section-title{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px}
+    .title{font-size:clamp(22px,3vw,28px); font-weight:800}
+    .subtitle{color:var(--muted)}
+
+    /* Catalog */
+    .filters{display:flex; flex-wrap:wrap; gap:10px; margin:12px 0 14px}
+    .chip{padding:8px 12px; border-radius:999px; border:1px solid rgba(148,163,184,.25); cursor:pointer; background:rgba(2,6,23,.4)}
+    .chip.active{background:rgba(59,130,246,.15); border-color:rgba(59,130,246,.45)}
+
+    .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+    @media (max-width:1024px){ .grid{grid-template-columns:repeat(3,1fr)} .hero-grid{grid-template-columns:1fr} }
+    @media (max-width:720px){ .grid{grid-template-columns:repeat(2,1fr)} .hero-grid{grid-template-columns:1fr} }
+    @media (max-width:480px){ .grid{grid-template-columns:1fr} }
+
+    .card{background:linear-gradient(180deg,#0b132b,#0a1227); border:1px solid rgba(148,163,184,.18); border-radius:16px; overflow:hidden; display:flex; flex-direction:column}
+    .card img{aspect-ratio:16/10; object-fit:cover}
+    .card-body{padding:14px; display:grid; gap:8px}
+    .specs{color:var(--muted); font-size:14px}
+    .price{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .price .usd{font-weight:800; font-size:18px}
+    .price .khr{font-size:12px; color:var(--muted)}
+    .add{margin-top:6px; padding:10px 12px; border-radius:12px; border:1px solid rgba(148,163,184,.35); background:rgba(2,6,23,.4); color:var(--text); cursor:pointer}
+    .add:hover{border-color:rgba(148,163,184,.55)}
+
+    /* Cart & checkout */
+    .table{width:100%; border-collapse:collapse}
+    .table th,.table td{padding:12px; border-bottom:1px solid rgba(148,163,184,.18); text-align:left}
+    .qty{display:inline-flex; align-items:center; border:1px solid rgba(148,163,184,.25); border-radius:9px; overflow:hidden}
+    .qty button{background:transparent; border:none; padding:6px 10px; color:var(--text); cursor:pointer}
+    .qty input{width:44px; padding:6px 0; text-align:center; background:transparent; border:none; color:var(--text)}
+
+    .panel{background:linear-gradient(180deg,#0b132b,#0a1227); border:1px solid rgba(148,163,184,.2); border-radius:16px; padding:16px}
+
+    /* Forms */
+    .field{display:grid; gap:6px; margin-bottom:12px}
+    label{font-size:14px; color:var(--muted)}
+    input,select,textarea{padding:12px; border-radius:12px; background:#0b1226; border:1px solid rgba(148,163,184,.25); color:var(--text)}
+    input:focus,select:focus,textarea:focus{outline:none; box-shadow:var(--ring); border-color:var(--brand)}
+
+    /* Footer */
+    footer{border-top:1px solid rgba(148,163,184,.15); padding:28px 0; color:var(--muted)}
+    .footer-grid{display:grid; grid-template-columns:2fr 1fr 1fr; gap:16px}
+    @media (max-width:720px){ .footer-grid{grid-template-columns:1fr} }
+
+    /* Simple router visibility */
+    .route{display:none}
+    .route.active{display:block}
+
+    /* Language toggle */
+    .lang-toggle{display:flex; gap:8px; align-items:center}
+    .lang-toggle button{padding:8px 12px; border-radius:10px; border:1px solid rgba(148,163,184,.25); background:transparent; color:var(--text); cursor:pointer}
+    .lang-toggle button.active{background:rgba(59,130,246,.15); border-color:rgba(59,130,246,.45)}
+
+    .note{font-size:12px; color:var(--muted)}
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:16px">TSMDev PC Store</div>
+          <div class="note" id="brandTag">Premium PCs • Phnom Penh</div>
+        </div>
+      </div>
+      <div class="nav-links">
+        <button class="tab active" data-route="home" data-i18n="nav.home">Home</button>
+        <button class="tab" data-route="catalog" data-i18n="nav.catalog">Catalog</button>
+        <button class="tab" data-route="cart" data-i18n="nav.cart">Cart</button>
+        <button class="tab" data-route="checkout" data-i18n="nav.checkout">Checkout</button>
+        <button class="tab" data-route="contact" data-i18n="nav.contact">Contact</button>
+        <div class="lang-toggle">
+          <span class="note" data-i18n="nav.lang">Language</span>
+          <button id="lang-en" class="active">EN</button>
+          <button id="lang-km">KM</button>
+        </div>
+        <button class="pill cart-btn" data-route="cart">
+          🛒 <span data-i18n="nav.viewCart">View Cart</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- HERO / HOME -->
+    <section id="route-home" class="route active hero">
+      <div class="hero-grid">
+        <div>
+          <span class="badge">⚡ <span data-i18n="hero.badge">Best Deals This Week</span></span>
+          <h1 data-i18n="hero.title">Build your dream PC. Game harder. Work smarter.</h1>
+          <p data-i18n="hero.desc">Gaming rigs, office PCs, laptops, and accessories—curated for Cambodia with dual pricing (USD/៛), COD and ABA transfer supported.</p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" data-route="catalog" data-i18n="hero.shopNow">Shop Now</button>
+            <button class="btn btn-outline" data-route="contact" data-i18n="hero.contactUs">Contact Us</button>
+          </div>
+          <div style="margin-top:14px" class="note" data-i18n="hero.note">Prices auto‑show in USD and Khmer Riel (configurable rate).</div>
+        </div>
+        <div class="hero-card">
+          <div style="display:flex; gap:12px">
+            <div style="flex:1" class="panel">
+              <div class="subtitle" data-i18n="hero.cardGaming">Gaming PCs</div>
+              <div class="title">RTX • Ryzen • i7</div>
+              <div class="note" data-i18n="hero.cardGamingDesc">Performance builds ready to play AAA titles.</div>
+            </div>
+            <div style="flex:1" class="panel">
+              <div class="subtitle" data-i18n="hero.cardOffice">Office PCs</div>
+              <div class="title">Quiet • Efficient</div>
+              <div class="note" data-i18n="hero.cardOfficeDesc">Reliable desktops for study and work.</div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="subtitle" data-i18n="promo.title">Promotions & Special Discounts</div>
+            <ul class="note" id="promoList">
+              <li data-i18n="promo.p1">Back‑to‑School: up to 10% off select laptops</li>
+              <li data-i18n="promo.p2">Free mouse + pad on gaming builds over $800</li>
+              <li data-i18n="promo.p3">ABA transfer bonus: 1% discount (code ABA1)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATALOG -->
+    <section id="route-catalog" class="route">
+      <div class="section-title">
+        <div>
+          <div class="title" data-i18n="catalog.title">Product Catalog</div>
+          <div class="subtitle" data-i18n="catalog.subtitle">Browse by category and add to cart.</div>
+        </div>
+        <div>
+          <label class="note" for="search" data-i18n="catalog.search">Search</label>
+          <input id="search" placeholder="RTX, i5, SSD..." />
+        </div>
+      </div>
+      <div class="filters" id="categoryChips"></div>
+      <div class="grid" id="productGrid"></div>
+    </section>
+
+    <!-- CART -->
+    <section id="route-cart" class="route">
+      <div class="section-title">
+        <div class="title" data-i18n="cart.title">Your Cart</div>
+        <div class="subtitle" data-i18n="cart.subtitle">Review items before checkout.</div>
+      </div>
+      <div class="panel">
+        <div style="overflow:auto">
+          <table class="table" id="cartTable">
+            <thead>
+              <tr>
+                <th data-i18n="cart.item">Item</th>
+                <th data-i18n="cart.price">Price</th>
+                <th data-i18n="cart.qty">Qty</th>
+                <th data-i18n="cart.total">Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:14px">
+          <div class="panel" style="min-width:280px">
+            <div style="display:grid; gap:6px">
+              <div style="display:flex; justify-content:space-between">
+                <span data-i18n="cart.subtotal">Subtotal</span>
+                <strong id="subtotal">$0.00 / ៛0</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between">
+                <span data-i18n="cart.shipping">Shipping</span>
+                <span id="shipping" class="note">$0.00</span>
+              </div>
+              <hr style="border:0; border-top:1px solid rgba(148,163,184,.2)">
+              <div style="display:flex; justify-content:space-between">
+                <span data-i18n="cart.grand">Grand Total</span>
+                <strong id="grand">$0.00 / ៛0</strong>
+              </div>
+              <button class="btn btn-primary" data-route="checkout" data-i18n="cart.toCheckout">Proceed to Checkout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHECKOUT -->
+    <section id="route-checkout" class="route">
+      <div class="section-title">
+        <div class="title" data-i18n="checkout.title">Checkout</div>
+        <div class="subtitle" data-i18n="checkout.subtitle">Pay via COD or ABA Bank Transfer.</div>
+      </div>
+      <div class="panel" style="display:grid; gap:16px">
+        <div class="field">
+          <label data-i18n="form.fullname">Full Name</label>
+          <input id="fullName" placeholder="Chan Dara" />
+        </div>
+        <div class="field" style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+          <div>
+            <label data-i18n="form.phone">Phone</label>
+            <input id="phone" placeholder="0xx xxx xxx" />
+          </div>
+          <div>
+            <label>Email</label>
+            <input id="email" placeholder="you@example.com" />
+          </div>
+        </div>
+        <div class="field">
+          <label data-i18n="form.address">Address</label>
+          <input id="address" placeholder="Street, Khan, Phnom Penh" />
+        </div>
+        <div class="field">
+          <label data-i18n="form.payment">Payment Method</label>
+          <div style="display:flex; gap:16px; flex-wrap:wrap">
+            <label><input type="radio" name="pay" value="COD" checked /> <span data-i18n="pay.cod">Cash on Delivery (COD)</span></label>
+            <label><input type="radio" name="pay" value="ABA" /> <span data-i18n="pay.aba">ABA Bank Transfer</span></label>
+          </div>
+          <div id="abaInfo" class="note" style="display:none; margin-top:8px">
+            ABA Account: <strong>000 123 456</strong> — Name: <strong>TSMDEV CO</strong> — Use note: <strong>OrderID</strong>
+          </div>
+        </div>
+        <div class="panel" style="display:grid; gap:8px">
+          <div class="subtitle" data-i18n="checkout.summary">Order Summary</div>
+          <div id="orderSummary" class="note">No items yet.</div>
+          <div style="display:flex; justify-content:space-between">
+            <span data-i18n="checkout.total">Total</span>
+            <strong id="checkoutTotal">$0.00 / ៛0</strong>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <button id="placeOrder" class="btn btn-primary" data-i18n="checkout.place">Place Order</button>
+          <button class="btn btn-outline" data-route="cart" data-i18n="checkout.back">Back to Cart</button>
+        </div>
+        <div id="orderResult" class="panel" style="display:none"></div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="route-contact" class="route">
+      <div class="section-title">
+        <div>
+          <div class="title" data-i18n="contact.title">Contact Us</div>
+          <div class="subtitle" data-i18n="contact.subtitle">Find us in Phnom Penh or reach out via Telegram/Phone.</div>
+        </div>
+      </div>
+      <div class="panel" style="display:grid; gap:16px">
+        <div style="display:grid; grid-template-columns:1.2fr .8fr; gap:16px">
+          <div>
+            <iframe title="Phnom Penh Map" style="border:0; width:100%; height:360px; border-radius:14px" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15641.78165308871!2d104.914932!3d11.556373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3109516d3f0dc5e5%3A0x8b6cb4d5d6f9d5c6!2sPhnom%20Penh!5e0!3m2!1sen!2skh!4v1685888888888"></iframe>
+          </div>
+          <div>
+            <div class="field">
+              <label data-i18n="contact.tel">Telegram</label>
+              <input value="t.me/tsmdev" readonly />
+            </div>
+            <div class="field">
+              <label data-i18n="contact.phone">Phone</label>
+              <input value="+855 0xx xxx xxx" readonly />
+            </div>
+            <div class="field">
+              <label data-i18n="contact.hours">Hours</label>
+              <input value="Mon–Sun 9:00–19:00" readonly />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom:8px">
+          <div class="logo"></div>
+          <strong>TSMDev PC Store</strong>
+        </div>
+        <div class="note" data-i18n="footer.about">We provide quality PCs and components with local warranty and friendly support in Phnom Penh.</div>
+      </div>
+      <div>
+        <div style="font-weight:700; margin-bottom:8px" data-i18n="footer.links">Links</div>
+        <ul class="note">
+          <li><a href="#" data-route="home" data-i18n="nav.home">Home</a></li>
+          <li><a href="#" data-route="catalog" data-i18n="nav.catalog">Catalog</a></li>
+          <li><a href="#" data-route="contact" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-weight:700; margin-bottom:8px" data-i18n="footer.social">Social</div>
+        <ul class="note">
+          <li><a href="https://facebook.com/yourpage" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://t.me/tsmdev" target="_blank" rel="noopener">Telegram</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ==========================
+       CONFIG & DATA
+    ========================== */
+    const USD_TO_KHR = 4100; // Adjust exchange rate here.
+
+    const CATEGORIES = [
+      { id: 'all', label: { en: 'All', km: 'ទាំងអស់' } },
+      { id: 'gaming', label: { en: 'Gaming PCs', km: 'កុំព្យូទ័រ​កីឡា' } },
+      { id: 'office', label: { en: 'Office PCs', km: 'កុំព្យូទ័រ​ការិយាល័យ' } },
+      { id: 'laptop', label: { en: 'Laptops', km: 'កុំព្យូទ័រ​ដៃ' } },
+      { id: 'accessory', label: { en: 'Accessories', km: 'គ្រឿង​បន្ថែម' } },
+      { id: 'custom', label: { en: 'Custom Builds', km: 'តំឡើងតាម​បំណង' } },
+    ];
+
+    const PRODUCTS = [
+      {id:'g1', name:'Shadow RTX 4060 Ti', cat:'gaming', price:899, img:'https://images.unsplash.com/photo-1547394765-185e1e68f34e?q=80&w=1200&auto=format&fit=crop', specs:'Ryzen 5 5600 • RTX 4060 Ti • 16GB • 1TB NVMe'},
+      {id:'g2', name:'Nova RTX 4070', cat:'gaming', price:1299, img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop', specs:'Intel i7 12700F • RTX 4070 • 32GB • 1TB NVMe'},
+      {id:'g3', name:'Mini ITX 3060', cat:'gaming', price:799, img:'https://images.unsplash.com/photo-1611171711796-1f4a1a3a7a1a?q=80&w=1200&auto=format&fit=crop', specs:'Ryzen 5 3600 • RTX 3060 • 16GB • 512GB NVMe'},
+
+      {id:'o1', name:'Office Quiet i5', cat:'office', price:499, img:'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1200&auto=format&fit=crop', specs:'Intel i5 • 8GB • 256GB SSD • Wi‑Fi'},
+      {id:'o2', name:'Study Pro', cat:'office', price:399, img:'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop', specs:'Ryzen 3 • 8GB • 240GB SSD • Office'},
+
+      {id:'l1', name:'UltraBook 14', cat:'laptop', price:699, img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop', specs:'14" FHD • i5 • 8GB • 512GB SSD'},
+      {id:'l2', name:'Gaming Laptop 15', cat:'laptop', price:1099, img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop', specs:'15.6" 144Hz • RTX 4060 • 16GB • 1TB SSD'},
+
+      {id:'a1', name:'Mechanical Keyboard', cat:'accessory', price:59, img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop', specs:'RGB • Hot‑swap • Blue Switches'},
+      {id:'a2', name:'Gaming Mouse', cat:'accessory', price:29, img:'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1200&auto=format&fit=crop', specs:'12,000 DPI • 6 Buttons'},
+
+      {id:'c1', name:'Custom Build Starter', cat:'custom', price:650, img:'https://images.unsplash.com/photo-1547394765-185e1e68f34e?q=80&w=1200&auto=format&fit=crop', specs:'Ryzen 5 • GTX 1660S • 16GB • 512GB SSD'},
+      {id:'c2', name:'Creator Build', cat:'custom', price:1599, img:'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1200&auto=format&fit=crop', specs:'Ryzen 9 • RTX 4080 • 64GB • 2TB NVMe'},
+    ];
+
+    /* ==========================
+       LANGUAGE (EN/KM)
+    ========================== */
+    const i18n = {
+      en:{
+        'nav.home':'Home','nav.catalog':'Catalog','nav.cart':'Cart','nav.checkout':'Checkout','nav.contact':'Contact','nav.lang':'Language','nav.viewCart':'View Cart',
+        'hero.badge':'Best Deals This Week','hero.title':'Build your dream PC. Game harder. Work smarter.','hero.desc':'Gaming rigs, office PCs, laptops, and accessories—curated for Cambodia with dual pricing (USD/៛), COD and ABA transfer supported.','hero.shopNow':'Shop Now','hero.contactUs':'Contact Us','hero.note':'Prices auto‑show in USD and Khmer Riel (configurable rate).','hero.cardGaming':'Gaming PCs','hero.cardGamingDesc':'Performance builds ready to play AAA titles.','hero.cardOffice':'Office PCs','hero.cardOfficeDesc':'Reliable desktops for study and work.',
+        'promo.title':'Promotions & Special Discounts','promo.p1':'Back‑to‑School: up to 10% off select laptops','promo.p2':'Free mouse + pad on gaming builds over $800','promo.p3':'ABA transfer bonus: 1% discount (code ABA1)',
+        'catalog.title':'Product Catalog','catalog.subtitle':'Browse by category and add to cart.','catalog.search':'Search',
+        'cart.title':'Your Cart','cart.subtitle':'Review items before checkout.','cart.item':'Item','cart.price':'Price','cart.qty':'Qty','cart.total':'Total','cart.subtotal':'Subtotal','cart.shipping':'Shipping','cart.grand':'Grand Total','cart.toCheckout':'Proceed to Checkout',
+        'checkout.title':'Checkout','checkout.subtitle':'Pay via COD or ABA Bank Transfer.','checkout.summary':'Order Summary','checkout.total':'Total','checkout.place':'Place Order','checkout.back':'Back to Cart',
+        'form.fullname':'Full Name','form.phone':'Phone','form.address':'Address',
+        'pay.cod':'Cash on Delivery (COD)','pay.aba':'ABA Bank Transfer',
+        'contact.title':'Contact Us','contact.subtitle':'Find us in Phnom Penh or reach out via Telegram/Phone.','contact.tel':'Telegram','contact.phone':'Phone','contact.hours':'Hours',
+        'footer.about':'We provide quality PCs and components with local warranty and friendly support in Phnom Penh.','footer.links':'Links','footer.social':'Social'
+      },
+      km:{
+        'nav.home':'ទំព័រដើម','nav.catalog':'បញ្ជីទំនិញ','nav.cart':'រទេះទំនិញ','nav.checkout':'គណនេយ្យ/បង់ប្រាក់','nav.contact':'ទាក់ទងមកយើង','nav.lang':'ភាសា','nav.viewCart':'មើលរទេះ',
+        'hero.badge':'ប្រូម៉ូសិនល្អ​បំផុតសប្ដាហ៍នេះ','hero.title':'កសាងកុំព្យូទ័រខាងសុបិន្ត។ លេងល្អជាងមុន។ ធ្វើការឆ្លាតជាងមុន។','hero.desc':'Gaming, Office, Laptop និង Accessories — តម្លៃ USD/៛ មានការគាំទ្រ COD និង ABA Transfer','hero.shopNow':'ចាប់ផ្តើមទិញ','hero.contactUs':'ទាក់ទងយើង','hero.note':'បង្ហាញតម្លៃជាដុល្លារ និងរៀលដោយស្វ័យប្រវត្តិ (អត្រាប្ដូរប្រាក់កែសម្រួលបាន)។','hero.cardGaming':'កុំព្យូទ័រ​ Game','hero.cardGamingDesc':'សមត្ថភាពខ្ពស់ សម្រាប់ហ្គេម AAA','hero.cardOffice':'កុំព្យូទ័រ ការិយាល័យ','hero.cardOfficeDesc':'ទុកចិត្តបាន ស្ងាត់ និងសន្សំសំചី',
+        'promo.title':'ពិសេស & បញ្ចុះតម្លៃ','promo.p1':'Back‑to‑School: បញ្ចុះដល់ 10% លើ Laptop ជ្រើសរើស','promo.p2':'ទទួល Mouse + Pad ឥតគិតថ្លៃ ពេលទិញ Gaming Build $800↑','promo.p3':'ABA Bonus: បញ្ចុះ 1% (កូដ ABA1)',
+        'catalog.title':'បញ្ជីទំនិញ','catalog.subtitle':'ជ្រើសថ្នាក់ និងបន្ថែមទៅរទេះ។','catalog.search':'ស្វែងរក',
+        'cart.title':'រទេះទំនិញ','cart.subtitle':'ពិនិត្យមើលមុនពេលបង់ប្រាក់។','cart.item':'ទំនិញ','cart.price':'តម្លៃ','cart.qty':'បរិមាណ','cart.total':'សរុប','cart.subtotal':'សរុបរទេះ','cart.shipping':'ដឹកជញ្ជូន','cart.grand':'សរុបចុងក្រោយ','cart.toCheckout':'បន្តទៅគណនេយ្យ',
+        'checkout.title':'គណនេយ្យ/បង់ប្រាក់','checkout.subtitle':'បង់ជា COD ឬ ABA Bank Transfer','checkout.summary':'សេចក្ដីសង្ខេបការបញ្ជាទិញ','checkout.total':'សរុប','checkout.place':'បញ្ជាទិញឥឡូវ','checkout.back':'ត្រឡប់ទៅរទេះ',
+        'form.fullname':'ឈ្មោះពេញ','form.phone':'លេខទូរស័ព្ទ','form.address':'អាសយដ្ឋាន',
+        'pay.cod':'បង់លុយពេលដឹកទៅដល់ (COD)','pay.aba':'បង់តាម ABA Bank',
+        'contact.title':'ទាក់ទងមកយើង','contact.subtitle':'ស្វែងរកយើងនៅភ្នំពេញ ឬទាក់ទងតាម Telegram/ទូរស័ព្ទ','contact.tel':'Telegram','contact.phone':'ទូរស័ព្ទ','contact.hours':'ម៉ោងធ្វើការ',
+        'footer.about':'យើងផ្តល់ជូនកុំព្យូទ័រ និងគ្រឿងផ្សំដែលមានគុណភាព មានធានាទឹកដី និងសេវាកម្មល្អ នៅភ្នំពេញ។','footer.links':'តំណភ្ជាប់','footer.social':'បណ្តាញសង្គម'
+      }
+    };
+
+    let currentLang = 'en';
+
+    /* ==========================
+       SIMPLE SPA ROUTER
+    ========================== */
+    const routeButtons = document.querySelectorAll('[data-route]');
+    function go(route){
+      document.querySelectorAll('.route').forEach(r=>r.classList.remove('active'));
+      document.querySelector(`#route-${route}`).classList.add('active');
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll(`.tab[data-route="${route}"]`).forEach(t=>t.classList.add('active'));
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    routeButtons.forEach(b=>b.addEventListener('click', e=>{ e.preventDefault(); go(b.dataset.route); }));
+
+    /* ==========================
+       RENDER CATEGORY CHIPS
+    ========================== */
+    const chipsWrap = document.getElementById('categoryChips');
+    let activeCat = 'all';
+    function renderChips(){
+      chipsWrap.innerHTML = '';
+      CATEGORIES.forEach(c=>{
+        const chip = document.createElement('button');
+        chip.className = 'chip' + (c.id===activeCat?' active':'');
+        chip.textContent = c.label[currentLang];
+        chip.addEventListener('click', ()=>{ activeCat=c.id; renderChips(); renderProducts(); });
+        chipsWrap.appendChild(chip);
+      });
+    }
+
+    /* ==========================
+       RENDER PRODUCTS
+    ========================== */
+    const grid = document.getElementById('productGrid');
+    const searchInput = document.getElementById('search');
+
+    function toKHR(usd){ return Math.round(usd * USD_TO_KHR).toLocaleString('en-US'); }
+
+    function renderProducts(){
+      const q = searchInput.value.trim().toLowerCase();
+      const items = PRODUCTS.filter(p => (activeCat==='all' || p.cat===activeCat) && (!q || (p.name.toLowerCase().includes(q) || p.specs.toLowerCase().includes(q))));
+      grid.innerHTML = '';
+      if(items.length===0){
+        grid.innerHTML = `<div class="panel">No items found.</div>`;
+        return;
+      }
+      items.forEach(p=>{
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.name}">
+          <div class="card-body">
+            <strong>${p.name}</strong>
+            <div class="specs">${p.specs}</div>
+            <div class="price">
+              <div>
+                <div class="usd">$${p.price.toFixed(2)}</div>
+                <div class="khr">៛${toKHR(p.price)}</div>
+              </div>
+              <button class="add" data-id="${p.id}">+ <span data-i18n="add">Add to Cart</span></button>
+            </div>
+          </div>`;
+        card.querySelector('.add').addEventListener('click', ()=> addToCart(p.id));
+        grid.appendChild(card);
+      });
+      applyLang();
+    }
+    searchInput.addEventListener('input', renderProducts);
+
+    /* ==========================
+       CART LOGIC
+    ========================== */
+    const cartCount = document.getElementById('cartCount');
+    const cartTableBody = document.querySelector('#cartTable tbody');
+    let cart = JSON.parse(localStorage.getItem('pcstore_cart')||'{}'); // {id: qty}
+
+    function saveCart(){ localStorage.setItem('pcstore_cart', JSON.stringify(cart)); }
+
+    function addToCart(id){
+      cart[id] = (cart[id]||0)+1; saveCart(); updateCartUI();
+      go('cart');
+    }
+
+    function updateCartUI(){
+      // Count
+      const count = Object.values(cart).reduce((a,b)=>a+b,0);
+      cartCount.textContent = count;
+
+      // Rows
+      cartTableBody.innerHTML = '';
+      let subtotal = 0;
+      Object.entries(cart).forEach(([id,qty])=>{
+        const p = PRODUCTS.find(x=>x.id===id);
+        if(!p) return;
+        const row = document.createElement('tr');
+        const total = p.price * qty; subtotal += total;
+        row.innerHTML = `
+          <td>
+            <div style="display:flex; align-items:center; gap:10px">
+              <img src="${p.img}" alt="${p.name}" style="width:72px; height:48px; object-fit:cover; border-radius:8px">
+              <div>
+                <div><strong>${p.name}</strong></div>
+                <div class="note">${p.specs}</div>
+              </div>
+            </div>
+          </td>
+          <td>$${p.price.toFixed(2)}<br><span class="note">៛${toKHR(p.price)}</span></td>
+          <td>
+            <div class="qty">
+              <button aria-label="decrease">−</button>
+              <input value="${qty}" />
+              <button aria-label="increase">+</button>
+            </div>
+          </td>
+          <td>$${total.toFixed(2)}<br><span class="note">៛${toKHR(total)}</span></td>
+          <td><button class="pill" data-remove>✕</button></td>`;
+        const [dec, input, inc] = row.querySelectorAll('.qty *');
+        dec.addEventListener('click', ()=>{ cart[id] = Math.max(1, (cart[id]||1)-1); saveCart(); updateCartUI(); });
+        inc.addEventListener('click', ()=>{ cart[id] = (cart[id]||1)+1; saveCart(); updateCartUI(); });
+        input.addEventListener('change', ()=>{ let v = parseInt(input.value||'1'); if(isNaN(v)||v<1) v=1; cart[id]=v; saveCart(); updateCartUI(); });
+        row.querySelector('[data-remove]').addEventListener('click', ()=>{ delete cart[id]; saveCart(); updateCartUI(); });
+        cartTableBody.appendChild(row);
+      });
+
+      const shipping = subtotal>0 ? 5 : 0; // flat demo shipping
+      document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)} / ៛${toKHR(subtotal)}`;
+      document.getElementById('shipping').textContent = `$${shipping.toFixed(2)}`;
+      const grand = subtotal + shipping;
+      document.getElementById('grand').textContent = `$${grand.toFixed(2)} / ៛${toKHR(grand)}`;
+
+      // Sync checkout summary
+      renderOrderSummary();
+    }
+
+    /* ==========================
+       CHECKOUT
+    ========================== */
+    const orderSummary = document.getElementById('orderSummary');
+    const checkoutTotal = document.getElementById('checkoutTotal');
+    const placeOrderBtn = document.getElementById('placeOrder');
+
+    function renderOrderSummary(){
+      const lines = [];
+      let total = 0;
+      Object.entries(cart).forEach(([id,qty])=>{
+        const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
+        const t = p.price*qty; total+=t;
+        lines.push(`${p.name} × ${qty} — $${t.toFixed(2)}`);
+      });
+      if(lines.length===0){ orderSummary.textContent = currentLang==='en'?'No items yet.':'មិនមានទំនិញទេ'; }
+      else{ orderSummary.innerHTML = lines.map(l=>`<div>${l}</div>`).join(''); }
+      checkoutTotal.textContent = `$${total.toFixed(2)} / ៛${toKHR(total)}`;
+    }
+
+    // Show ABA info conditionally
+    document.querySelectorAll('input[name="pay"]').forEach(r=>{
+      r.addEventListener('change', ()=>{
+        document.getElementById('abaInfo').style.display = r.value==='ABA' && r.checked ? 'block' : 'none';
+      });
+    });
+
+    placeOrderBtn.addEventListener('click', ()=>{
+      if(Object.keys(cart).length===0){ alert(currentLang==='en'?'Your cart is empty':'រទេះទំនិញទទេ'); return; }
+      const fullName = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const pay = document.querySelector('input[name="pay"]:checked').value;
+      if(!fullName || !phone || !address){ alert(currentLang==='en'?'Please fill required fields':'សូមបញ្ចូលព័ត៌មានចាំបាច់'); return; }
+      const orderId = 'KH' + Math.floor(Math.random()*1e6).toString().padStart(6,'0');
+      const result = document.getElementById('orderResult');
+      result.style.display = 'block';
+      result.innerHTML = `
+        <div><strong>${currentLang==='en'?'Order Placed!':'បានបញ្ជាទិញ!'}</strong> ${currentLang==='en'?'ID':'លេខ'}: <code>${orderId}</code></div>
+        <div class="note">${currentLang==='en'?'We will contact you for delivery. Payment:':'យើងនឹងទាក់ទងដើម្បីដឹកជញ្ជូន។ វិធីបង់ប្រាក់:'} <strong>${pay}</strong></div>`;
+      // Clear cart for demo
+      cart = {}; saveCart(); updateCartUI();
+      go('home');
+    });
+
+    /* ==========================
+       LANGUAGE APPLY
+    ========================== */
+    const langEnBtn = document.getElementById('lang-en');
+    const langKmBtn = document.getElementById('lang-km');
+
+    function applyLang(){
+      document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const key = el.getAttribute('data-i18n');
+        const t = i18n[currentLang][key];
+        if(typeof t !== 'undefined'){ el.textContent = t; }
+      });
+      // Update category chips labels
+      renderChips();
+    }
+
+    langEnBtn.addEventListener('click', ()=>{ currentLang='en'; langEnBtn.classList.add('active'); langKmBtn.classList.remove('active'); applyLang(); });
+    langKmBtn.addEventListener('click', ()=>{ currentLang='km'; langKmBtn.classList.add('active'); langEnBtn.classList.remove('active'); applyLang(); });
+
+    /* ==========================
+       INIT
+    ========================== */
+    renderChips();
+    renderProducts();
+    updateCartUI();
+  </script>
+</body>
+</html>
